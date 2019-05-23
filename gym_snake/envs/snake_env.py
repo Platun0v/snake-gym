@@ -15,7 +15,7 @@ class SnakeEnv(gym.Env):
 
     def __init__(self):
         self.snake = None
-        self.blocks = 25
+        self.blocks = 10
         self.width = 500
 
         self.action_space = spaces.Discrete(2)

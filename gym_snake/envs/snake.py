@@ -39,7 +39,8 @@ class Snake:
         self.apple = None
         self.generate_apple()
         self.apple_ate = False
-        self.cnt = 0
+        self.cnt_apples = 0
+        self.cnt_steps = 0
 
     def generate_apple(self):
         while True:
@@ -94,12 +95,17 @@ class Snake:
 
     def get_raw_state(self):
         reward = -0.25
+        self.cnt_steps += 1
         if self.apple_ate:
-            self.cnt += 1
+            self.cnt_apples += 1
             self.apple_ate = False
-            reward = 3 * self.cnt
+            self.cnt_steps = 0
+            reward = 3 * self.cnt_apples
         elif self.game_over:
-            reward = -10
+            if self.cnt_steps < 15:
+                reward = -100
+            else:
+                reward = -10
 
         state = [
             self.head.bounds.x // self.blockw,  # from head to left side
