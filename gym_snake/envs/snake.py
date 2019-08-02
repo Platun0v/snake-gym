@@ -1,11 +1,8 @@
-from collections import namedtuple
-import numpy as np
-
-
 class Block:
     def __init__(self, x, y, w, color):
-        rect = namedtuple('rect', ('x', 'y', 'w'))
-        self.bounds = rect(x=x, y=y, w=w)
+        self.x = x
+        self.y = y
+        self.w = w
         self.color = color
 
 
@@ -45,12 +42,12 @@ class Snake:
     def generate_apple(self):
         while True:
             x, y = self.random.randint(0, self.blocks - 1), self.random.randint(0, self.blocks - 1)
-            if self.head.bounds.x == x * self.blockw and self.head.bounds.y == y * self.blockw:
+            if self.head.x == x * self.blockw and self.head.y == y * self.blockw:
                 continue
 
             flag = False
             for e in self.body:
-                if e.bounds.x == x * self.blockw and e.bounds.y == y * self.blockw:
+                if e.x == x * self.blockw and e.y == y * self.blockw:
                     flag = True
                     continue
             if flag:
@@ -66,28 +63,28 @@ class Snake:
 
     def update(self):
         for e in self.body:
-            if e.bounds.x == self.head.bounds.x and e.bounds.y == self.head.bounds.y:
+            if e.x == self.head.x and e.y == self.head.y:
                 self.game_over = True
                 return
 
-        if self.head.bounds.x < 0 or \
-                self.head.bounds.x > (self.blocks - 1) * self.blockw or \
-                self.head.bounds.y < 0 or \
-                self.head.bounds.y > (self.blocks - 1) * self.blockw:
+        if self.head.x < 0 or \
+                self.head.x > (self.blocks - 1) * self.blockw or \
+                self.head.y < 0 or \
+                self.head.y > (self.blocks - 1) * self.blockw:
             self.game_over = True
             return
 
         self.head.color = (0, 255, 0)
         self.body = [self.head] + self.body[:]
-        self.head = Block(self.head.bounds.x + self.direction[0][0] * self.blockw,
-                          self.head.bounds.y + self.direction[0][1] * self.blockw,
+        self.head = Block(self.head.x + self.direction[0][0] * self.blockw,
+                          self.head.y + self.direction[0][1] * self.blockw,
                           self.blockw,
                           (0, 255, 255))
 
         if self.apple is None:
             self.generate_apple()
 
-        if self.apple.bounds.x == self.head.bounds.x and self.apple.bounds.y == self.head.bounds.y:
+        if self.apple.x == self.head.x and self.apple.y == self.head.y:
             self.generate_apple()
             self.apple_ate = True
         else:
@@ -108,27 +105,27 @@ class Snake:
                 reward = -10
 
         state = [
-            self.head.bounds.x // self.blockw,  # from head to left side
-            self.blocks - (self.head.bounds.x // self.blockw) - 1,  # from head to right side
-            self.head.bounds.y // self.blockw,  # from head to up side
-            self.blocks - (self.head.bounds.y // self.blockw) - 1,  # from head to down side
+            self.head.x // self.blockw,  # from head to left side
+            self.blocks - (self.head.x // self.blockw) - 1,  # from head to right side
+            self.head.y // self.blockw,  # from head to up side
+            self.blocks - (self.head.y // self.blockw) - 1,  # from head to down side
         ]
 
         for e in self.body:
-            if e.bounds.x == self.head.bounds.x:
-                if e.bounds.y < self.head.bounds.y:
-                    state[2] = min(state[2], (self.head.bounds.y - e.bounds.y) // self.blockw - 1)
+            if e.x == self.head.x:
+                if e.y < self.head.y:
+                    state[2] = min(state[2], (self.head.y - e.y) // self.blockw - 1)
                 else:
-                    state[3] = min(state[3], (- self.head.bounds.y + e.bounds.y) // self.blockw - 1)
-            elif e.bounds.y == self.head.bounds.y:
-                if e.bounds.x < self.head.bounds.x:
-                    state[0] = min(state[0], (self.head.bounds.x - e.bounds.x) // self.blockw - 1)
+                    state[3] = min(state[3], (- self.head.y + e.y) // self.blockw - 1)
+            elif e.y == self.head.y:
+                if e.x < self.head.x:
+                    state[0] = min(state[0], (self.head.x - e.x) // self.blockw - 1)
                 else:
-                    state[1] = min(state[1], (- self.head.bounds.x + e.bounds.x) // self.blockw - 1)
+                    state[1] = min(state[1], (- self.head.x + e.x) // self.blockw - 1)
 
         apple_crd = [
-            (-self.head.bounds.x + self.apple.bounds.x) // self.blockw,
-            (self.head.bounds.y - self.apple.bounds.y) // self.blockw,
+            (-self.head.x + self.apple.x) // self.blockw,
+            (self.head.y - self.apple.y) // self.blockw,
         ]
 
         if self.direction == self.DIRECTIONS['UP']:
