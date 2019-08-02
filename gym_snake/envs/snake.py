@@ -149,4 +149,4 @@ class Snake:
 
         state.extend(apple_crd)
 
-        return state, reward
+        return state, reward, self.game_over
