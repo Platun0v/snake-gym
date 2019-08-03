@@ -5,8 +5,8 @@ import numpy as np
 
 from gym_snake.envs.snake import Snake
 
-
 import logging
+
 logger = logging.getLogger(__name__)
 
 
@@ -84,7 +84,7 @@ class SnakeEnv(gym.Env):
         self.apple_trans.set_translation(self.snake.apple.x, self.snake.apple.y)
         self.head_trans.set_translation(self.snake.head.x, self.snake.head.y)
 
-        if len(self.snake.body) != len(self.body):
+        if len(self.snake.body) > len(self.body):
             body = self._create_block(w)
             body_trans = rendering.Transform()
             body.add_attr(body_trans)
@@ -92,6 +92,11 @@ class SnakeEnv(gym.Env):
 
             self.body.append(body_trans)
             self.viewer.add_geom(body)
+        elif len(self.snake.body) < len(self.body):
+            self.body, trash = self.body[len(self.body) - len(self.snake.body):], \
+                               self.body[:len(self.body) - len(self.snake.body)]
+            for i in range(len(trash)):
+                trash[i].set_translation(-w, -w)
 
         for i in range(len(self.body)):
             self.body[i].set_translation(self.snake.body[i].x, self.snake.body[i].y)

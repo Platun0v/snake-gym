@@ -8,8 +8,8 @@ class Block:
 
 class Snake:
     DIRECTIONS = {
-        'UP': ((0, -1), 'LEFT', 'RIGHT'),
-        'DOWN': ((0, 1), 'RIGHT', 'LEFT'),
+        'UP': ((0, 1), 'LEFT', 'RIGHT'),
+        'DOWN': ((0, -1), 'RIGHT', 'LEFT'),
         'LEFT': ((-1, 0), 'DOWN', 'UP'),
         'RIGHT': ((1, 0), 'UP', 'DOWN'),
     }
@@ -25,7 +25,7 @@ class Snake:
         for i in range(4):
             self.body.append(
                 Block(x * block_len,
-                      (y + i + 1) * block_len,
+                      (y - i - 1) * block_len,
                       block_len,
                       (0, 255, 0)))
         self.head = Block(x * block_len,
@@ -91,7 +91,7 @@ class Snake:
             self.body = self.body[:-1]
 
     def get_raw_state(self):
-        reward = -0.25
+        reward = -0.5
         self.cnt_steps += 1
         if self.apple_ate:
             self.cnt_apples += 1
@@ -107,8 +107,8 @@ class Snake:
         state = [
             self.head.x // self.blockw,  # from head to left side
             self.blocks - (self.head.x // self.blockw) - 1,  # from head to right side
-            self.head.y // self.blockw,  # from head to up side
-            self.blocks - (self.head.y // self.blockw) - 1,  # from head to down side
+            self.head.y // self.blockw,  # from head to down side
+            self.blocks - (self.head.y // self.blockw) - 1,  # from head to up side
         ]
 
         for e in self.body:
@@ -125,27 +125,29 @@ class Snake:
 
         apple_crd = [
             (-self.head.x + self.apple.x) // self.blockw,
-            (self.head.y - self.apple.y) // self.blockw,
+            (-self.head.y + self.apple.y) // self.blockw,
         ]
 
         if self.direction == self.DIRECTIONS['UP']:
-            state = [state[2], state[0], state[1]]
+            state = [state[3], state[0], state[1]]
         if self.direction == self.DIRECTIONS['LEFT']:
-            state = [state[0], state[3], state[2]]
+            state = [state[0], state[2], state[3]]
             if apple_crd[0] * apple_crd[1] > 0:
                 apple_crd[1] *= -1
             else:
                 apple_crd[0] *= -1
+            apple_crd[0], apple_crd[1] = apple_crd[1], apple_crd[0]
         if self.direction == self.DIRECTIONS['DOWN']:
-            state = [state[3], state[1], state[0]]
+            state = [state[2], state[1], state[0]]
             apple_crd[0] *= -1
             apple_crd[1] *= -1
         if self.direction == self.DIRECTIONS['RIGHT']:
-            state = [state[1], state[2], state[3]]
+            state = [state[1], state[3], state[2]]
             if apple_crd[0] * apple_crd[1] > 0:
                 apple_crd[0] *= -1
             else:
                 apple_crd[1] *= -1
+            apple_crd[0], apple_crd[1] = apple_crd[1], apple_crd[0]
 
         state.extend(apple_crd)
 
