@@ -62,11 +62,6 @@ class Snake:
             break
 
     def update(self):
-        for e in self.body:
-            if e.x == self.head.x and e.y == self.head.y:
-                self.game_over = True
-                return
-
         if self.head.x < 0 or \
                 self.head.x > (self.blocks - 1) * self.blockw or \
                 self.head.y < 0 or \
@@ -90,13 +85,16 @@ class Snake:
         else:
             self.body = self.body[:-1]
 
+        for e in self.body:
+            if e.x == self.head.x and e.y == self.head.y:
+                self.game_over = True
+
     def get_raw_state(self):
-        reward = -0.5
+        reward = -0.25
         self.cnt_steps += 1
         if self.apple_ate:
             self.cnt_apples += 1
             self.apple_ate = False
-            self.cnt_steps = 0
             reward = 3 * self.cnt_apples
         elif self.game_over:
             if self.cnt_steps < 15:
