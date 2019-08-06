@@ -14,12 +14,22 @@ class Snake:
         'RIGHT': ((1, 0), 'UP', 'DOWN'),
     }
 
-    def __init__(self, x, y, blocks, block_len, random):
+    def __init__(self, blocks, block_len, random,
+                 rew_step=-0.25, rew_apple=3.0, rew_death=-10.0, rew_death2=-100.0,
+                 rew_apple_func=lambda cnt, rew: cnt * rew):
         self.blockw = block_len
         self.blocks = blocks
+        self.random = random
+
+        x, y = self.blocks // 2, self.blocks // 2
         self.direction = self.DIRECTIONS['UP']
         self.game_over = False
-        self.random = random
+
+        self.rew_step = rew_step
+        self.rew_apple = rew_apple
+        self.rew_death = rew_death
+        self.rew_death2 = rew_death2
+        self.rew_apple_func = rew_apple_func
 
         self.body = []
         for i in range(4):
@@ -90,17 +100,17 @@ class Snake:
                 self.game_over = True
 
     def get_raw_state(self):
-        reward = -0.25
+        reward = self.rew_step
         self.cnt_steps += 1
         if self.apple_ate:
             self.cnt_apples += 1
             self.apple_ate = False
-            reward = 3 * self.cnt_apples
+            reward = self.rew_apple_func(self.cnt_apples, self.rew_apple)
         elif self.game_over:
             if self.cnt_steps < 15:
-                reward = -100
+                reward = self.rew_death2
             else:
-                reward = -10
+                reward = self.rew_death
 
         state = [
             self.head.x // self.blockw,  # from head to left side

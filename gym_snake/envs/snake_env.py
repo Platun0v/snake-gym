@@ -27,6 +27,10 @@ class SnakeEnv(gym.Env):
 
         self.seed()
         self.viewer = None
+        self.rewards = None
+
+    def set_rewards(self, rew_step, rew_apple, rew_death, rew_death2, rew_apple_func):
+        self.rewards = [rew_step, rew_apple, rew_death, rew_death2, rew_apple_func]
 
     def seed(self, seed=None):
         self.np_random, seed = seeding.np_random(seed)
@@ -45,7 +49,13 @@ class SnakeEnv(gym.Env):
         return state, reward, done, {}
 
     def reset(self):
-        self.snake = Snake(self.blocks // 2, self.blocks // 2, self.blocks, self.width // self.blocks, self.np_random)
+        if self.rewards:
+            self.snake = Snake(self.blocks, self.width // self.blocks, self.np_random,
+                               rew_step=self.rewards[0], rew_apple=self.rewards[1],
+                               rew_death=self.rewards[2], rew_death2=self.rewards[3],
+                               rew_apple_func=self.rewards[4],)
+        else:
+            self.snake = Snake(self.blocks, self.width // self.blocks, self.np_random)
         raw_state = self.snake.get_raw_state()
 
         state = np.array(raw_state[0], dtype=np.float32)
