@@ -8,8 +8,8 @@ import numpy as np
 
 
 class Agent:
-    def __init__(self, pth_path, seed):
-        self.model = DQN(seed)
+    def __init__(self, state_size, action_size, pth_path, seed):
+        self.model = DQN(state_size, action_size, seed)
         self.model.load_state_dict(torch.load(pth_path))
 
     def act(self, state):
@@ -23,7 +23,7 @@ class Agent:
 
 def main(pth_path, render, times, seed):
     env = get_env()
-    agent = Agent(pth_path, seed)
+    agent = Agent(env.observation_space.shape[0], env.action_space.n, pth_path, seed)
     watch_agent(agent, env, times, render)
 
 
@@ -32,16 +32,27 @@ def get_env():
 
 
 def watch_agent(agent, env, times, render):
+    scores = []
+    apples = []
+
     for i in range(times):
         state = env.reset()
+        score = 0
         while True:
             if render:
                 env.render()
                 sleep(0.05)
             action = agent.act(state)
-            state, reward, done, _ = env.step(action)
+            state, reward, done, info = env.step(action)
+            score += reward
             if done:
                 break
+
+        scores.append(score)
+        apples.append(info['apples'])
+        print(f'\rEpisode {i}\t'
+              f'Average apples: {np.mean(apples):.2f}\t'
+              f'Average score: {np.mean(scores):.2f}', end='')
     env.close()
 
 

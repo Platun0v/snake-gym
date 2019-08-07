@@ -46,7 +46,7 @@ class SnakeEnv(gym.Env):
         state = np.array(raw_state, dtype=np.float32)
         state /= self.blocks
 
-        return state, reward, done, {}
+        return state, reward, done, {'apples': self.snake.cnt_apples}
 
     def reset(self):
         if self.rewards:
