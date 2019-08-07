@@ -21,9 +21,9 @@ class Agent:
         return np.argmax(action_values.data.numpy())
 
 
-def main(pth_path, render, times, seed, width, blocks):
+def main(load_path, render, times, seed, width, blocks):
     env = get_env(seed, width, blocks)
-    agent = Agent(env.observation_space.shape[0], env.action_space.n, pth_path, seed)
+    agent = Agent(env.observation_space.shape[0], env.action_space.n, load_path, seed)
     watch_agent(agent, env, times, render)
 
 
@@ -68,7 +68,7 @@ def watch_agent(agent, env, times, render):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser('Test trained agent')
-    parser.add_argument('--pth_path', default='rl/default_model.pth', type=str)
+    parser.add_argument('--load_path', default='rl/default_model.pth', type=str)
     parser.add_argument('--render', action='store_true')
     parser.add_argument('--times', default=3, type=int)
     parser.add_argument('--seed', default=0, type=int)
@@ -77,7 +77,7 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
     main(
-        pth_path=args.pth_path,
+        load_path=args.load_path,
         render=args.render,
         times=args.times,
         seed=args.seed,
