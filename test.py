@@ -35,9 +35,11 @@ def watch_agent(agent, env, times, render):
     scores = []
     apples = []
 
-    for i in range(times):
+    for i in range(1, times + 1):
         state = env.reset()
         score = 0
+        steps_after_last_apple = 0
+
         while True:
             if render:
                 env.render()
@@ -47,6 +49,12 @@ def watch_agent(agent, env, times, render):
             score += reward
             if done:
                 break
+
+            steps_after_last_apple += 1
+            if steps_after_last_apple > 200:
+                break
+            if info['apple_ate']:
+                steps_after_last_apple = 0
 
         scores.append(score)
         apples.append(info['apples'])

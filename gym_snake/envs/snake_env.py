@@ -40,13 +40,18 @@ class SnakeEnv(gym.Env):
         if action != 0:
             self.snake.direction = self.snake.DIRECTIONS[self.snake.direction[action]]
 
+        info = {}
+
         self.snake.update()
+        info['apple_ate'] = self.snake.apple_ate
+
         raw_state, reward, done = self.snake.get_raw_state()
+        info['apples'] = self.snake.cnt_apples
 
         state = np.array(raw_state, dtype=np.float32)
         state /= self.blocks
 
-        return state, reward, done, {'apples': self.snake.cnt_apples}
+        return state, reward, done, info
 
     def reset(self):
         if self.rewards:
