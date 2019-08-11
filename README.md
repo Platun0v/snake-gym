@@ -1,7 +1,7 @@
-# gym-snake
+# snake-gym
 
 ## Description
-gym-snake is implementation of the classic game snake that is made as an OpenAI gym environment
+snake-gym is implementation of the classic game snake that is made as an OpenAI gym environment
 
 ## Dependencies
 + gym
