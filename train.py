@@ -8,15 +8,15 @@ from rl.agent import Agent
 from collections import deque
 
 
-def main(save_path, render, seed, width, blocks, episodes, max_t, eps_start, eps_end, eps_decay):
-    env = get_env(seed, width, blocks)
+def main(save_path, render, seed, block_size, blocks, episodes, max_t, eps_start, eps_end, eps_decay):
+    env = get_env(seed, block_size, blocks)
     agent = Agent(env.observation_space.shape[0], env.action_space.n, seed)
     agent = train_dqn(agent, env, episodes, max_t, eps_start, eps_end, eps_decay, render)
     torch.save(agent.qnetwork_local.state_dict(), save_path)
 
 
-def get_env(seed, width, blocks):
-    env = gym.make('Snake-v0', width=width, blocks=blocks)
+def get_env(seed, block_size, blocks):
+    env = gym.make('Snake-v0', block_size=block_size, blocks=blocks)
     env.seed(seed)
     return env
 
@@ -61,7 +61,7 @@ if __name__ == '__main__':
     parser.add_argument('--render', action='store_true')
     parser.add_argument('--seed', default=0, type=int)
     parser.add_argument('--blocks', default=10, type=int)
-    parser.add_argument('--width', default=500, type=int)
+    parser.add_argument('--block_size', default=50, type=int)
     parser.add_argument('--episodes', default=2000, type=int)
     parser.add_argument('--max_t', default=1500, type=int)
     parser.add_argument('--eps_start', default=1.0, type=float)
@@ -73,7 +73,7 @@ if __name__ == '__main__':
         save_path=args.save_path,
         render=args.render,
         seed=args.seed,
-        width=args.width,
+        block_size=args.block_size,
         blocks=args.blocks,
         episodes=args.episodes,
         max_t=args.max_t,

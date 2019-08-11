@@ -21,14 +21,14 @@ class Agent:
         return np.argmax(action_values.data.numpy())
 
 
-def main(load_path, render, times, seed, width, blocks):
-    env = get_env(seed, width, blocks)
+def main(load_path, render, times, seed, block_size, blocks):
+    env = get_env(seed, block_size, blocks)
     agent = Agent(env.observation_space.shape[0], env.action_space.n, load_path, seed)
     watch_agent(agent, env, times, render)
 
 
-def get_env(seed, width, blocks):
-    env = gym.make('Snake-v0', width=width, blocks=blocks)
+def get_env(seed, block_size, blocks):
+    env = gym.make('Snake-v0', block_size=block_size, blocks=blocks)
     env.seed(seed)
     return env
 
@@ -73,7 +73,7 @@ if __name__ == '__main__':
     parser.add_argument('--times', default=3, type=int)
     parser.add_argument('--seed', default=0, type=int)
     parser.add_argument('--blocks', default=10, type=int)
-    parser.add_argument('--width', default=500, type=int)
+    parser.add_argument('--block_size', default=50, type=int)
 
     args = parser.parse_args()
     main(
@@ -81,6 +81,6 @@ if __name__ == '__main__':
         render=args.render,
         times=args.times,
         seed=args.seed,
-        width=args.width,
+        block_size=args.block_size,
         blocks=args.blocks,
     )
