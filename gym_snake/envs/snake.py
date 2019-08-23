@@ -1,3 +1,6 @@
+from math import sqrt
+
+
 class Block:
     def __init__(self, x, y, w, color):
         self.x = x
@@ -15,8 +18,8 @@ class Snake:
     }
 
     def __init__(self, blocks, block_len, random,
-                 rew_step=-0.25, rew_apple=3.0, rew_death=-10.0, rew_death2=-100.0,
-                 rew_apple_func=lambda cnt, rew: cnt * rew):
+                 rew_step=-0.25, rew_apple=3.5, rew_death=-10.0, rew_death2=-100.0,
+                 rew_apple_func=lambda cnt, rew: sqrt(cnt) * rew):
         self.blockw = block_len
         self.blocks = blocks
         self.random = random
