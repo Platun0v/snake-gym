@@ -52,3 +52,5 @@ for i in range(100):
             print('episode {} finished after {} timesteps'.format(i, t))
             break
 ```
+#
+https://habr.com/ru/post/465477/
